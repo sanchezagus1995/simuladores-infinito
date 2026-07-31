@@ -35,6 +35,18 @@
           TNA (%)
           <input id="tna" type="number" inputmode="decimal" min="0" step="0.01" value="56">
         </label>
+
+        <label>
+          Quebranto (%)
+          <div class="quebranto-control">
+            <select id="quebranto-operacion" aria-label="Operación del quebranto">
+              <option value="sumar">Sumar</option>
+              <option value="restar">Restar</option>
+            </select>
+            <input id="quebranto" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+          </div>
+          <span id="quebranto-ayuda" class="field-help">Sin ajuste sobre el monto.</span>
+        </label>
       </div>
 
       <div class="row">
@@ -52,6 +64,11 @@
 
   <!-- métricas principales -->
   <div class="resultado-grid">
+
+    <div class="metric-card">
+      <div class="metric-label">Monto financiado</div>
+      <div class="metric-value" id="res-monto-financiado">-</div>
+    </div>
 
     <div class="metric-card">
       <div class="metric-label">TNA</div>

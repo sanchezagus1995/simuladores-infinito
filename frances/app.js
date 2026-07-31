@@ -86,11 +86,23 @@ function cftea(i) {
   return pow(1 + i * (1 + IVA), 12) - 1;
 }
 
+function ajustarMontoPorQuebranto(monto, quebrantoPct, operacion) {
+  const factor = 1 + quebrantoPct / 100;
+  return operacion === "restar" ? monto / factor : monto * factor;
+}
+
+function porcentajeEfectivoResta(quebrantoPct) {
+  return (quebrantoPct / (100 + quebrantoPct)) * 100;
+}
+
 function readInputs() {
-  const M = Number(getEl("monto")?.value || 0);
+  const montoBase = Number(getEl("monto")?.value || 0);
   const n = Number(getEl("plazo")?.value || 0);
   const tna = Number(getEl("tna")?.value || 0);
-  return { M, n, tna };
+  const quebranto = Number(getEl("quebranto")?.value || 0);
+  const operacionQuebranto = getEl("quebranto-operacion")?.value || "sumar";
+  const M = ajustarMontoPorQuebranto(montoBase, quebranto, operacionQuebranto);
+  return { M, montoBase, n, tna, quebranto, operacionQuebranto };
 }
 
 function clearTablaCuotas() {
@@ -100,6 +112,7 @@ function clearTablaCuotas() {
 
 function clearCalcUI() {
   [
+    "res-monto-financiado",
     "res-tna",
     "res-cuota1",
     "res-cuota-final",
@@ -144,11 +157,11 @@ function generarTablaCuotas(M, n, i, cuotaSinIva) {
 }
 
 function calcular() {
-  const { M, n, tna } = readInputs();
+  const { M, montoBase, n, tna, quebranto, operacionQuebranto } = readInputs();
 
-  if (!(M > 0) || !(n > 0) || tna < 0) {
+  if (!(montoBase > 0) || !(n > 0) || tna < 0 || quebranto < 0) {
     clearCalcUI();
-    setStatus("Ingresá un monto, plazo y TNA válidos.");
+    setStatus("Ingresá un monto, plazo, TNA y quebranto válidos.");
     return null;
   }
 
@@ -164,6 +177,7 @@ function calcular() {
   const ivaUlt = ivaUltima(interesUlt);
   const cuotaUlt = saldoPrev + interesUlt + ivaUlt;
 
+  setText("res-monto-financiado", fmtARS(M));
   setText("res-tna", `${tna}%`);
   setText("res-cuota1", fmtARS(cuota1));
   setText("res-cuota-final", fmtARS(cuotaUlt));
@@ -176,6 +190,9 @@ function calcular() {
   logSimulacion({
     simulador: "frances",
     monto: M,
+    montoBase,
+    quebranto,
+    operacionQuebranto,
     plazo: n,
     tna,
     cuota1,
@@ -185,6 +202,9 @@ function calcular() {
 
   return {
     M,
+    montoBase,
+    quebranto,
+    operacionQuebranto,
     n,
     tna,
     i,
@@ -203,7 +223,10 @@ async function copiarResultado() {
   const monto = getEl("monto")?.value || "—";
   const plazo = getEl("plazo")?.value || "—";
   const tna = getEl("tna")?.value || "—";
+  const quebranto = Number(getEl("quebranto")?.value || 0);
+  const operacion = getEl("quebranto-operacion")?.value || "sumar";
 
+  const montoFinanciado = getEl("res-monto-financiado")?.textContent || "—";
   const tnaTxt = getEl("res-tna")?.textContent || "—";
   const cuota1 = getEl("res-cuota1")?.textContent || "—";
   const cuotaFinal = getEl("res-cuota-final")?.textContent || "—";
@@ -214,6 +237,8 @@ async function copiarResultado() {
     "",
     `Plazo: ${plazo} meses`,
     `TNA ingresada: ${tna} %`,
+    `Quebranto: ${operacion === "sumar" ? "Suma" : "Resta"} ${quebranto} %`,
+    `Monto financiado: ${montoFinanciado}`,
     "",
     `TNA: ${tnaTxt}`,
     `Cuota 1: ${cuota1}`,
@@ -229,9 +254,30 @@ async function copiarResultado() {
   }
 }
 
+function actualizarAyudaQuebranto() {
+  const quebranto = Number(getEl("quebranto")?.value || 0);
+  const operacion = getEl("quebranto-operacion")?.value || "sumar";
+  const ayuda = getEl("quebranto-ayuda");
+  if (!ayuda) return;
+
+  if (!(quebranto > 0)) {
+    ayuda.textContent = "Sin ajuste sobre el monto.";
+  } else if (operacion === "restar") {
+    ayuda.textContent = `Resta efectiva: ${porcentajeEfectivoResta(quebranto).toLocaleString("es-AR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} %.`;
+  } else {
+    ayuda.textContent = `Se suma ${quebranto.toLocaleString("es-AR")} % al monto.`;
+  }
+}
+
 function init() {
   getEl("btn")?.addEventListener("click", calcular);
   getEl("btnCopiar")?.addEventListener("click", copiarResultado);
+  getEl("quebranto")?.addEventListener("input", actualizarAyudaQuebranto);
+  getEl("quebranto-operacion")?.addEventListener("change", actualizarAyudaQuebranto);
+  actualizarAyudaQuebranto();
   setStatus("");
 }
 
