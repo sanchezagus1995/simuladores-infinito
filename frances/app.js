@@ -220,14 +220,12 @@ function calcular() {
 }
 
 async function copiarResultado() {
-  const monto = getEl("monto")?.value || "—";
   const plazo = getEl("plazo")?.value || "—";
   const tna = getEl("tna")?.value || "—";
 
   const montoFinanciado = getEl("res-monto-financiado")?.textContent || "—";
   const cuota1 = getEl("res-cuota1")?.textContent || "—";
   const cuotaFinal = getEl("res-cuota-final")?.textContent || "—";
-  const cfteaTxt = getEl("res-cftea")?.textContent || "—";
 
   const texto = [
     "Simulación Sistema Francés",
