@@ -177,7 +177,7 @@ function calcular() {
   const ivaUlt = ivaUltima(interesUlt);
   const cuotaUlt = saldoPrev + interesUlt + ivaUlt;
 
-  setText("res-monto-financiado", fmtARS(M));
+  setText("res-monto-financiado", fmtARS(montoBase));
   setText("res-tna", `${tna}%`);
   setText("res-cuota1", fmtARS(cuota1));
   setText("res-cuota-final", fmtARS(cuotaUlt));
