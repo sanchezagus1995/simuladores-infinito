@@ -1,59 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simuladores | Infinito Créditos</title>
-
-    <link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simuladores y herramientas financieras de Infinito Créditos.">
+  <title>Simuladores | Infinito Créditos</title><link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-    <main class="container">
-        <img class="logo" src="./assets/logo-infinito.png" alt="Infinito Créditos">
-        <p class="eyebrow">Infinito Créditos</p>
-        <h1>Herramientas financieras</h1>
-        <p class="intro">Elegí el simulador que querés utilizar.</p>
-
-        <nav class="simulator-grid" aria-label="Simuladores disponibles">
-            <a class="simulator-card" href="./frances/">
-                <span class="card-tag">Tasa configurable</span>
-                <strong>Sistema Francés</strong>
-                <span>Cuota, interés, IVA y costo financiero.</span>
-                <b>Ingresar →</b>
-            </a>
-            <a class="simulator-card" href="./uva/">
-                <span class="card-tag">Actualizable</span>
-                <strong>Crédito UVA</strong>
-                <span>Cuotas UVA y proyección estimada en pesos.</span>
-                <b>Ingresar →</b>
-            </a>
-            <a class="simulator-card" href="./creditcar/">
-                <span class="card-tag">Entidad</span>
-                <strong>Creditcar</strong>
-                <span>Planes según monto y modelo del vehículo.</span>
-                <b>Ingresar →</b>
-            </a>
-            <a class="simulator-card" href="./tcf/">
-                <span class="card-tag">Entidad</span>
-                <strong>TCF</strong>
-                <span>Sistema francés con condiciones de TCF.</span>
-                <b>Ingresar →</b>
-            </a>
-            <a class="simulator-card" href="./bcra/">
-                <span class="card-tag">Consulta</span>
-                <strong>Central de Deudores BCRA</strong>
-                <span>Consultá la situación crediticia por CUIL, CUIT o CDI.</span>
-                <b>Consultar →</b>
-            </a>
-        </nav>
-    </main>
-
-</body>
-
-</html>
+<main class="container">
+  <header class="hero">
+    <div class="brand"><img class="logo" src="./assets/logo-infinito.png" alt="Infinito Créditos"></div>
+    <div><p class="eyebrow">Herramientas comerciales</p><h1>Simuladores de crédito</h1>
+    <p class="intro">Calculá alternativas de financiación y consultá información crediticia desde un único lugar.</p></div>
+  </header>
+  <section aria-labelledby="simuladores-title">
+    <div class="section-heading"><div><p class="section-kicker">Financiación</p><h2 id="simuladores-title">Elegí un simulador</h2></div><span class="tool-count">4 herramientas</span></div>
+    <nav class="simulator-grid" aria-label="Simuladores disponibles">
+      <a class="simulator-card" href="./frances/"><span class="card-icon">SF</span><span class="card-copy"><span class="card-tag">Tasa configurable</span><strong>Sistema Francés</strong><span>Cuota, interés, IVA y costo financiero.</span></span><span class="card-arrow">→</span></a>
+      <a class="simulator-card" href="./uva/"><span class="card-icon">UV</span><span class="card-copy"><span class="card-tag">Actualizable</span><strong>Crédito UVA</strong><span>Cuotas UVA y proyección estimada en pesos.</span></span><span class="card-arrow">→</span></a>
+      <a class="simulator-card" href="./creditcar/"><span class="card-icon">CC</span><span class="card-copy"><span class="card-tag">Entidad</span><strong>Creditcar</strong><span>Planes según monto y modelo del vehículo.</span></span><span class="card-arrow">→</span></a>
+      <a class="simulator-card" href="./tcf/"><span class="card-icon">TC</span><span class="card-copy"><span class="card-tag">Entidad</span><strong>TCF</strong><span>Sistema francés con condiciones de TCF.</span></span><span class="card-arrow">→</span></a>
+    </nav>
+  </section>
+  <section class="consult-section" aria-labelledby="consultas-title">
+    <div class="section-heading"><div><p class="section-kicker">Consultas</p><h2 id="consultas-title">Información crediticia</h2></div></div>
+    <a class="bcra-card" href="./bcra/"><span class="bcra-mark">BCRA</span><span class="bcra-copy"><span class="card-tag">Central de Deudores</span><strong>Consultá la situación crediticia</strong><span>Buscá por CUIL, CUIT o CDI en la información publicada por el Banco Central.</span></span><span class="bcra-action">Consultar →</span></a>
+  </section>
+</main>
+</body></html>
