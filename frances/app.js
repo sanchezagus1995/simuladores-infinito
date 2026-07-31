@@ -223,11 +223,8 @@ async function copiarResultado() {
   const monto = getEl("monto")?.value || "—";
   const plazo = getEl("plazo")?.value || "—";
   const tna = getEl("tna")?.value || "—";
-  const quebranto = Number(getEl("quebranto")?.value || 0);
-  const operacion = getEl("quebranto-operacion")?.value || "sumar";
 
   const montoFinanciado = getEl("res-monto-financiado")?.textContent || "—";
-  const tnaTxt = getEl("res-tna")?.textContent || "—";
   const cuota1 = getEl("res-cuota1")?.textContent || "—";
   const cuotaFinal = getEl("res-cuota-final")?.textContent || "—";
   const cfteaTxt = getEl("res-cftea")?.textContent || "—";
@@ -237,10 +234,8 @@ async function copiarResultado() {
     "",
     `Plazo: ${plazo} meses`,
     `TNA ingresada: ${tna} %`,
-    `Quebranto: ${operacion === "sumar" ? "Suma" : "Resta"} ${quebranto} %`,
     `Monto financiado: ${montoFinanciado}`,
     "",
-    `TNA: ${tnaTxt}`,
     `Cuota 1: ${cuota1}`,
     `Cuota final: ${cuotaFinal}`,
   ].join("\n");
