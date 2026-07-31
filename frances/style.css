@@ -1,0 +1,208 @@
+:root {
+  font-family: system-ui, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f6f7f9;
+  color: #111;
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 0 16px 24px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+h3 {
+  margin: 18px 0 10px;
+}
+
+.muted {
+  color: #555;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 14px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+input {
+  padding: 10px 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 10px 12px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button.ghost {
+  background: transparent;
+  color: #111;
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* bloque resultado */
+.resultado-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.metric-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 4px;
+  word-break: break-word;
+}
+
+/* tabla de cuotas */
+.tabla-cuotas-wrap {
+  margin-top: 4px;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.tabla-cuotas {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.tabla-cuotas th,
+.tabla-cuotas td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: right;
+  font-size: 13px;
+}
+
+.tabla-cuotas th:first-child,
+.tabla-cuotas td:first-child {
+  text-align: center;
+}
+
+.tabla-cuotas th {
+  background: #fafafa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* tabla BCRA compartida */
+.bcra-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.bcra-table th,
+.bcra-table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.bcra-table thead th {
+  background: #f3f5ff;
+  text-align: left;
+  font-weight: 700;
+}
+
+.bcra-table tbody tr:hover {
+  background: #fafbff;
+}
+
+@media (max-width: 920px) {
+  .resultado-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid,
+  .resultado-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+.row:first-child {
+  margin-bottom: 8px;
+}

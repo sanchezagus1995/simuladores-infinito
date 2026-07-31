@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema Francés</title>
+
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="../shared/bcra.css" />
+  <link rel="stylesheet" href="../shared/theme.css" />
+</head>
+<body>
+  <main class="wrap">
+       
+    <a href="../index.html" class="back-link">← Volver al inicio</a>
+    
+    <h1>Sistema Francés</h1>
+    <p class="muted">
+      Calcula cuota fija, interés, IVA, TEA y CFTEA.
+    </p>
+
+    <section class="card">
+      <div class="grid">
+        <label>
+          Monto (ARS)
+          <input id="monto" type="number" inputmode="numeric" min="0" step="1000" value="5000000">
+        </label>
+
+        <label>
+          Plazo (meses)
+          <input id="plazo" type="number" inputmode="numeric" min="1" step="1" value="24">
+        </label>
+
+        <label>
+          TNA (%)
+          <input id="tna" type="number" inputmode="decimal" min="0" step="0.01" value="56">
+        </label>
+      </div>
+
+      <div class="row">
+        <button id="btn" type="button">Calcular</button>
+        <button id="btnCopiar" class="ghost" type="button">Copiar resultado</button>
+      </div>
+
+      <div id="status" class="status muted"></div>
+    </section>
+
+    <div id="bcra-container"></div>
+
+<div class="card">
+  <h2>Resultado</h2>
+
+  <!-- métricas principales -->
+  <div class="resultado-grid">
+
+    <div class="metric-card">
+      <div class="metric-label">TNA</div>
+      <div class="metric-value" id="res-tna">-</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Cuota 1</div>
+      <div class="metric-value" id="res-cuota1">-</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Cuota final</div>
+      <div class="metric-value" id="res-cuota-final">-</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">CFTEA</div>
+      <div class="metric-value" id="res-cftea">-</div>
+    </div>
+
+  </div>
+
+<div class="tabla-cuotas-wrap">
+  <h3>Tabla de cuotas</h3>
+
+  <div class="tabla-scroll">
+    <table class="tabla-cuotas">
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Interés</th>
+          <th>IVA</th>
+          <th>Capital</th>
+          <th>Saldo</th>
+          <th>Cuota</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-cuotas-body"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+    
+    <footer class="muted small">
+      Nota: el IVA se aplica sobre los intereses. La cuota base del sistema francés es fija.
+    </footer>
+  </main>
+
+  <script src="../shared/bcra.js"></script>
+  <script src="./app.js"></script>
+  <script>
+    renderBcraBlock("bcra-container", {
+      instanceId: "bcra-frances"
+    });
+  </script>
+</body>
+</html>
