@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Central de Deudores BCRA | Infinito Créditos</title>
+  <link rel="stylesheet" href="../shared/bcra.css" />
+  <link rel="stylesheet" href="../shared/theme.css" />
+</head>
+<body>
+  <main class="wrap">
+    <a href="../index.html" class="back-link">← Volver al inicio</a>
+    <h1>Central de Deudores BCRA</h1>
+    <p class="muted">Consultá la situación crediticia informada por el Banco Central.</p>
+    <div id="bcra-container"></div>
+    <footer class="muted small">
+      La información es provista por el BCRA y puede presentar demoras de actualización.
+    </footer>
+  </main>
+  <script src="../shared/bcra.js"></script>
+  <script>
+    renderBcraBlock("bcra-container", { instanceId: "bcra-independiente" });
+  </script>
+</body>
+</html>
