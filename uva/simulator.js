@@ -1,4 +1,4 @@
-// simulador.jss
+// Simulador UVA
 
 // ===== Helpers =====
 const fmtARS = (n) =>
@@ -36,149 +36,16 @@ function setText(id, value) {
   if (el) el.textContent = value;
 }
 
-function setValue(id, value) {
-  const el = $(id);
-  if (el) el.value = value;
+// ===== Quebranto =====
+function ajustarMontoPorQuebranto(monto, quebrantoPct, operacion) {
+  const factor = 1 + quebrantoPct / 100;
+  return operacion === "restar" ? monto / factor : monto * factor;
 }
 
-// ===== Helpers de gastos =====
-function incluyeGastosEntidad(modo) {
-  return modo === "sumar" || modo === "restar";
-}
-
-function getOperacionGastos(modo) {
-  if (modo.includes("restar")) return "restar";
-  return "sumar";
-}
-// ===== Configuración de gastos =====
-const GASTOS_ENTIDAD = {
-  12: { sumar: 13.31, restar: 11.75 },
-  18: { sumar: 18.15, restar: 15.36 },
-  24: { sumar: 22.99, restar: 18.69 },
-};
-
-const GASTO_INFINITO_RESTAR = 9.09;
-const GASTO_INFINITO_SUMAR = 10.0;
-
-function getPctEntidad(plazo, modo) {
-  const cfg = GASTOS_ENTIDAD[Number(plazo)];
-  if (!cfg) return 0;
-  return Number(cfg[modo] || 0);
-}
-
-function getDefaultPctByMode(mode, plazo) {
-  const operacion = getOperacionGastos(mode);
-  return getPctEntidad(plazo, operacion);
-}
-// ===== Lógica de montos =====
-function calcularMontosUVA(montoBase, plazo, modo) {
-  const incluyeEntidad = incluyeGastosEntidad(modo);
-  const operacion = getOperacionGastos(modo);
-
-  const pctEntidad = getPctEntidad(plazo, operacion);
-
-  if (!pctEntidad) {
-    throw new Error("No hay configuración de gastos para ese plazo.");
-  }
-
-  if (operacion === "restar") {
-    const pctEntidadDec = pctEntidad / 100;
-    const pctInfinitoDec = GASTO_INFINITO_RESTAR / 100;
-
-    const gastoEntidadArs = montoBase * pctEntidadDec;
-
-const montoDespuesEntidad = incluyeEntidad
-  ? montoBase - gastoEntidadArs
-  : montoBase;
-
-const gastoInfinitoArs = montoDespuesEntidad * pctInfinitoDec;
-
-const netoCliente = montoDespuesEntidad - gastoInfinitoArs;
-
-    if (netoCliente <= 0) {
-      throw new Error("El neto final debe ser mayor a cero.");
-    }
-
-    return {
-      montoBase,
-      plazo,
-      modo,
-      operacion,
-      incluyeEntidad,
-      porcentajeEntidad: pctEntidad,
-      porcentajeInfinito: GASTO_INFINITO_RESTAR,
-
-      montoIntermedio: montoDespuesEntidad,
-      montoFinal: netoCliente,
-      montoFinanciado: montoBase,
-
-      gastoEntidadArs,
-      gastoInfinitoArs,
-
-      netoCliente,
-      netoInfinito: gastoInfinitoArs,
-    };
-  }
-
-  if (operacion === "sumar") {
-    const pctInfinitoDec = GASTO_INFINITO_SUMAR / 100;
-    const pctEntidadDec = pctEntidad / 100;
-
-    const montoConInfinito = montoBase * (1 + pctInfinitoDec);
-    const gastoInfinitoArs = montoConInfinito - montoBase;
-
-    const gastoEntidadArs = montoConInfinito * pctEntidadDec;
-
-    const montoFinanciado = incluyeEntidad
-      ? montoConInfinito + gastoEntidadArs
-      : montoConInfinito;
-
-    return {
-      montoBase,
-      plazo,
-      modo,
-      operacion,
-      incluyeEntidad,
-      porcentajeEntidad: pctEntidad,
-      porcentajeInfinito: GASTO_INFINITO_SUMAR,
-
-      montoIntermedio: montoConInfinito,
-      montoFinal: montoFinanciado,
-      montoFinanciado,
-
-      gastoEntidadArs,
-      gastoInfinitoArs,
-
-      netoCliente: montoBase,
-      netoInfinito: gastoInfinitoArs,
-    };
-  }
-
-  throw new Error("Modo de gastos inválido.");
+function porcentajeEfectivoResta(quebrantoPct) {
+  return (quebrantoPct / (100 + quebrantoPct)) * 100;
 }
 // ===== BCRA UVA =====
-async function fetchJsonSafe(url) {
-  const resp = await fetch(url, { cache: "no-store" });
-
-  if (!resp.ok) {
-    throw new Error(`HTTP ${resp.status}`);
-  }
-
-  const text = await resp.text();
-
-  if (!text || !text.trim()) {
-    throw new Error("Respuesta vacía");
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    console.error("Respuesta inválida:", text);
-    throw new Error("JSON inválido");
-  }
-}
-
-// retry automático
 async function fetchJsonSafe(url) {
   const resp = await fetch(url, { cache: "no-store" });
 
@@ -423,54 +290,30 @@ function renderTable(rows) {
     .join("");
 }
 
-function renderMontoResumen(data) {
-const {
-  montoBase,
-  modo,
-  operacion,
-  incluyeEntidad,
-  porcentajeEntidad,
-  porcentajeInfinito,
-  gastoEntidadArs,
-  gastoInfinitoArs,
-  montoIntermedio,
-  montoFinal,
-  netoCliente,
-} = data;
+function renderMontoResumen({ montoBase, montoCalculo, quebrantoPct, operacion }) {
+  const ajuste = Math.abs(montoCalculo - montoBase);
+  const operacionLabel = operacion === "restar" ? "Restar" : "Sumar";
 
   setText("montoIngresado", fmtARS(montoBase));
-  setText("porcentajeGastosAplicado", `${fmtNum(porcentajeEntidad, 2)}%`);
+  setText("quebrantoAplicado", `${operacionLabel} ${fmtNum(quebrantoPct, 2)}%`);
   setText(
-  "gastosEntidadArs",
-  incluyeEntidad
-    ? fmtARS(gastoEntidadArs)
-    : `${fmtARS(gastoEntidadArs)} (no incluido)`
-);
-
-  setText("porcentajeGastosInfinito", `${fmtNum(porcentajeInfinito, 2)}%`);
-  setText("gastosInfinitoArs", fmtARS(gastoInfinitoArs));
-  setText("montoIntermedioCalculado", fmtARS(montoIntermedio));
-  setText("netoClienteArs", fmtARS(netoCliente));
-
-  if (data.operacion === "sumar") {
-    setText("labelMontoFinal", "Monto total financiado");
-    setText("labelMontoIngresado", "Monto base");
-    setText("labelMontoIntermedio", "Monto + Infinito");
-    setText("montoFinalCalculado", fmtARS(montoFinal));
-  } else {
-    setText("labelMontoFinal", "Neto a recibir");
-    setText("labelMontoIngresado", "Monto base");
-    setText("labelMontoIntermedio", "Monto usado para calcular cuotas");
-    setText("montoFinalCalculado", fmtARS(montoFinal));
-  }
+    "quebrantoDetalle",
+    operacion === "restar" && quebrantoPct > 0
+      ? `resta efectiva: ${fmtNum(porcentajeEfectivoResta(quebrantoPct), 2)}%`
+      : quebrantoPct > 0
+        ? "aplicado sobre el monto ingresado"
+        : "sin ajuste sobre el monto"
+  );
+  setText("ajusteQuebrantoArs", fmtARS(ajuste));
+  setText("montoCalculo", fmtARS(montoCalculo));
 }
 
 function buildSummary({
+  montoBase,
+  montoCalculo,
   plazo,
-  gastoEntidadArs,
-  gastoInfinitoArs,
-  montoFinanciado,
-  netoCliente,
+  quebrantoPct,
+  operacionQuebranto,
   tnaPct,
   inflacionPct,
   uva,
@@ -482,10 +325,9 @@ function buildSummary({
     "Simulador UVA",
     `UVA (${uva.fecha}): $${fmtNum(uva.valor, 2)}`,
     `Plazo: ${plazo} meses`,
-    `Gastos Infinito: ${fmtARS(gastoInfinitoArs)}`,
-    `Gastos entidad: ${fmtARS(gastoEntidadArs)}`,
-    `Monto total financiado: ${fmtARS(montoFinanciado)}`,
-    `Neto cliente: ${fmtARS(netoCliente)}`,
+    `Monto ingresado: ${fmtARS(montoBase)}`,
+    `Quebranto: ${operacionQuebranto === "restar" ? "Restar" : "Sumar"} ${fmtNum(quebrantoPct, 2)}%`,
+    `Monto para calcular cuotas: ${fmtARS(montoCalculo)}`,
     `TNA: ${fmtNum(tnaPct, 2)}%`,
     `Inflación supuesta: ${fmtNum(inflacionPct, 2)}% mensual`,
     `Capital inicial (UVA): ${fmtNum(capitalInicialUva, 4)}`,
@@ -539,12 +381,19 @@ function renderComparacionFrances(data) {
     </table>
   `;
 }
-// ===== Sincronización UI =====
-function syncPorcentajeSegunSeleccion() {
-  const plazo = Number($("plazo")?.value || 0);
-  const modo = $("modoGastos")?.value || "sumar";
-  const pct = getDefaultPctByMode(modo, plazo);
-  setValue("porcentajeGastos", pct ? fmtNum(pct, 2).replace(",", ".") : "");
+function actualizarAyudaQuebranto() {
+  const quebranto = Number($("quebranto")?.value || 0);
+  const operacion = $("quebranto-operacion")?.value || "sumar";
+  const ayuda = $("quebranto-ayuda");
+  if (!ayuda) return;
+
+  if (!(quebranto > 0)) {
+    ayuda.textContent = "Sin ajuste sobre el monto.";
+  } else if (operacion === "restar") {
+    ayuda.textContent = `Resta efectiva: ${fmtNum(porcentajeEfectivoResta(quebranto), 2)} %.`;
+  } else {
+    ayuda.textContent = `Se suma ${fmtNum(quebranto, 2)} % al monto.`;
+  }
 }
 
 // ===== Principal =====
@@ -556,17 +405,24 @@ async function calcular() {
     const plazo = Number($("plazo")?.value || 0);
     const tnaPct = Number($("tna")?.value || 0);
     const inflacionPct = Number($("inflacion")?.value || 0);
-    const modoGastos = $("modoGastos")?.value || "sumar";
+    const quebrantoPct = Number($("quebranto")?.value || 0);
+    const operacionQuebranto = $("quebranto-operacion")?.value || "sumar";
 
-    if (montoBase <= 0 || plazo <= 0) {
-      throw new Error("Completá monto y plazo con valores válidos.");
+    if (
+      montoBase <= 0 ||
+      !Number.isInteger(plazo) ||
+      plazo <= 0 ||
+      tnaPct < 0 ||
+      inflacionPct < 0 ||
+      quebrantoPct < 0
+    ) {
+      throw new Error("Completá monto, plazo, TNA, quebranto e inflación con valores válidos.");
     }
 
-    const gastos = calcularMontosUVA(montoBase, plazo, modoGastos);
-
-    setValue(
-      "porcentajeGastos",
-      fmtNum(gastos.porcentajeEntidad, 2).replace(",", ".")
+    const montoCalculo = ajustarMontoPorQuebranto(
+      montoBase,
+      quebrantoPct,
+      operacionQuebranto
     );
 
     const uva = await fetchUVA();
@@ -574,10 +430,15 @@ async function calcular() {
     setText("uvaActual", `$${fmtNum(uva.valor, 2)}`);
     setText("uvaFecha", `Fecha: ${uva.fecha}`);
 
-    renderMontoResumen(gastos);
+    renderMontoResumen({
+      montoBase,
+      montoCalculo,
+      quebrantoPct,
+      operacion: operacionQuebranto,
+    });
 
     const { capitalInicialUva, cuotaPuraUvaFija, rows } = buildSchedule({
-      montoArs: gastos.montoFinanciado,
+      montoArs: montoCalculo,
       plazo,
       tnaPct,
       inflacionPct,
@@ -591,35 +452,28 @@ async function calcular() {
     setText("cuotaArs1", primera ? fmtARS(primera.totalCuotaArs) : "—");
 
     renderTable(rows);
-const comparar = $("compararFrances")?.checked;
-const tnaTradicional = Number($("tnaTradicional")?.value || 0);
+    const comparar = $("compararFrances")?.checked;
+    const tnaTradicional = Number($("tnaTradicional")?.value || 0);
 
-if (comparar && tnaTradicional > 0) {
-  const comparacion = buildComparacionFrances({
-    rowsUva: rows,
-    montoFinanciado: gastos.montoFinanciado,
-    plazo,
-    tnaPct: tnaTradicional,
-  });
+    if (comparar && tnaTradicional > 0) {
+      const comparacion = buildComparacionFrances({
+        rowsUva: rows,
+        montoFinanciado: montoCalculo,
+        plazo,
+        tnaPct: tnaTradicional,
+      });
 
-  renderComparacionFrances(comparacion);
-} else {
-  const cont = $("resultadoComparacionFrances");
-  if (cont) cont.innerHTML = "";
-}
+      renderComparacionFrances(comparacion);
+    } else {
+      const cont = $("resultadoComparacionFrances");
+      if (cont) cont.innerHTML = "";
+    }
     window.__summary = buildSummary({
-      montoBase: gastos.montoBase,
-      plazo: gastos.plazo,
-      modo: gastos.modo,
-      porcentajeEntidad: gastos.porcentajeEntidad,
-      porcentajeInfinito: gastos.porcentajeInfinito,
-      gastoEntidadArs: gastos.gastoEntidadArs,
-      gastoInfinitoArs: gastos.gastoInfinitoArs,
-      montoIntermedio: gastos.montoIntermedio,
-      montoFinal: gastos.montoFinal,
-      netoCliente: gastos.netoCliente,
-      netoInfinito: gastos.netoInfinito,
-      montoFinanciado: gastos.montoFinanciado,
+      montoBase,
+      montoCalculo,
+      plazo,
+      quebrantoPct,
+      operacionQuebranto,
       tnaPct,
       inflacionPct,
       uva,
@@ -660,11 +514,11 @@ $("btnCopiar")?.addEventListener("click", async () => {
   }
 });
 
-$("modoGastos")?.addEventListener("change", syncPorcentajeSegunSeleccion);
-$("plazo")?.addEventListener("change", syncPorcentajeSegunSeleccion);
+$("quebranto")?.addEventListener("input", actualizarAyudaQuebranto);
+$("quebranto-operacion")?.addEventListener("change", actualizarAyudaQuebranto);
 
 // ===== Init =====
-syncPorcentajeSegunSeleccion();
+actualizarAyudaQuebranto();
 
 // 👇 estado inicial del bloque comparación
 const activoInicial = $("compararFrances")?.checked;
