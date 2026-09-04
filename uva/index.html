@@ -11,7 +11,7 @@
   <main class="wrap">
     <a href="../index.html" class="back-link">← Volver al inicio</a>
 
-    <h1> UVA</h1>
+    <h1>UVA</h1>
     <p class="muted">
       Calcula cuota <b>UVA</b>. Opcional: proyecta cuotas en pesos con inflación mensual estimada.
     </p>
@@ -34,23 +34,20 @@
         </label>
 
         <label>
+          Quebranto (%)
+          <div class="quebranto-control">
+            <select id="quebranto-operacion" aria-label="Operación del quebranto">
+              <option value="sumar">Sumar</option>
+              <option value="restar">Restar</option>
+            </select>
+            <input id="quebranto" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+          </div>
+          <span id="quebranto-ayuda" class="field-help">Sin ajuste sobre el monto.</span>
+        </label>
+
+        <label>
           Inflación mensual esperada (%)
           <input id="inflacion" type="number" inputmode="decimal" min="0" step="0.01" value="0">
-        </label>
-
-        <label>
-          Tratamiento de gastos
-          <select id="modoGastos">
-  <option value="sumar" selected>Sumar gastos entidad + Infinito</option>
-  <option value="restar">Restar gastos entidad + Infinito</option>
-  <option value="sumar_sin_entidad">Sin gastos entidad - sumar Infinito</option>
-  <option value="restar_sin_entidad">Sin gastos entidad - restar Infinito</option>
-</select>
-        </label>
-
-        <label>
-          % gastos entidad
-          <input id="porcentajeGastos" type="number" inputmode="decimal" min="0" step="0.01" value="13.31" readonly>
         </label>
       </div>
 
@@ -119,45 +116,27 @@
       <h3>Resumen de monto</h3>
       <div class="kpis">
         <div class="kpi">
-          <div class="kpi-label" id="labelMontoIngresado">Monto base</div>
+          <div class="kpi-label">Monto ingresado</div>
           <div id="montoIngresado" class="kpi-value">—</div>
           <div class="muted small">valor ingresado por el usuario</div>
         </div>
 
         <div class="kpi">
-          <div class="kpi-label">% gastos entidad</div>
-          <div id="porcentajeGastosAplicado" class="kpi-value">—</div>
-          <div class="muted small">según plazo y modo</div>
+          <div class="kpi-label">Quebranto</div>
+          <div id="quebrantoAplicado" class="kpi-value">—</div>
+          <div id="quebrantoDetalle" class="muted small">—</div>
         </div>
 
         <div class="kpi">
-          <div class="kpi-label">Gastos entidad</div>
-          <div id="gastosEntidadArs" class="kpi-value">—</div>
-          <div class="muted small">importe calculado</div>
+          <div class="kpi-label">Ajuste por quebranto</div>
+          <div id="ajusteQuebrantoArs" class="kpi-value">—</div>
+          <div class="muted small">diferencia aplicada al monto</div>
         </div>
 
         <div class="kpi">
-          <div class="kpi-label">% gastos Infinito</div>
-          <div id="porcentajeGastosInfinito" class="kpi-value">—</div>
-          <div class="muted small">9,09% o 10%</div>
-        </div>
-
-        <div class="kpi">
-          <div class="kpi-label">Gastos Infinito</div>
-          <div id="gastosInfinitoArs" class="kpi-value">—</div>
-          <div class="muted small">importe calculado</div>
-        </div>
-
-        <div class="kpi">
-          <div class="kpi-label" id="labelMontoFinal">Resultado final</div>
-          <div id="montoFinalCalculado" class="kpi-value">—</div>
-          <div class="muted small">resultado final según el modo</div>
-        </div>
-
-        <div class="kpi">
-          <div class="kpi-label">Neto cliente</div>
-          <div id="netoClienteArs" class="kpi-value">—</div>
-          <div class="muted small">monto que recibe efectivamente</div>
+          <div class="kpi-label">Monto para calcular cuotas</div>
+          <div id="montoCalculo" class="kpi-value">—</div>
+          <div class="muted small">capital ajustado por quebranto</div>
         </div>
       </div>
 
@@ -186,7 +165,7 @@
     </footer>
   </main>
 
-  <script src="./simulator.js"></script>
+  <script src="./simulator.js?v=2"></script>
 
 </body>
 </html>
