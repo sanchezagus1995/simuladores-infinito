@@ -147,7 +147,7 @@ function generarTablaCuotas(MCalculado, n, i, cuotaSinIva) {
 function calcular() {
   const { M, n } = readInputs();
 
-  const tna = 42.9; // fija
+  const tna = 39.9; // fija
   const MCalculado = M * 1.15; // +15% oculto
 
   if (!(M > 0) || !(n > 0) || tna < 0) {
