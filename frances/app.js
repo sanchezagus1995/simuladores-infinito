@@ -116,6 +116,7 @@ function clearCalcUI() {
     "res-tna",
     "res-cuota1",
     "res-cuota-final",
+    "res-cuota-promedio",
     "res-cftea",
   ].forEach((id) => setText(id, "—"));
 
@@ -172,6 +173,10 @@ function calcular() {
   const iva1 = ivaPrimerMes(interes1);
   const cuota1 = cuotaSinIva + iva1;
 
+  // Total de intereses = suma de cuotas base menos el capital financiado.
+  const interesesTotales = n * cuotaSinIva - M;
+  const cuotaPromedio = cuotaSinIva + (interesesTotales * IVA) / n;
+
   const saldoPrev = saldoPrevio(M, i, n);
   const interesUlt = interesUltima(saldoPrev, i);
   const ivaUlt = ivaUltima(interesUlt);
@@ -181,6 +186,7 @@ function calcular() {
   setText("res-tna", `${tna}%`);
   setText("res-cuota1", fmtARS(cuota1));
   setText("res-cuota-final", fmtARS(cuotaUlt));
+  setText("res-cuota-promedio", fmtARS(cuotaPromedio));
   setText("res-cftea", fmtPct(cftea(i)));
 
   generarTablaCuotas(M, n, i, cuotaSinIva);
@@ -197,6 +203,7 @@ function calcular() {
     tna,
     cuota1,
     cuotaUlt,
+    cuotaPromedio,
     timestamp: new Date().toISOString()
   });
 
@@ -216,6 +223,7 @@ function calcular() {
     interesUlt,
     ivaUlt,
     cuotaUlt,
+    cuotaPromedio,
   };
 }
 
@@ -226,6 +234,7 @@ async function copiarResultado() {
   const montoFinanciado = getEl("res-monto-financiado")?.textContent || "—";
   const cuota1 = getEl("res-cuota1")?.textContent || "—";
   const cuotaFinal = getEl("res-cuota-final")?.textContent || "—";
+  const cuotaPromedio = getEl("res-cuota-promedio")?.textContent || "—";
 
   const texto = [
     "Simulación Sistema Francés",
@@ -236,6 +245,7 @@ async function copiarResultado() {
     "",
     `Cuota 1: ${cuota1}`,
     `Cuota final: ${cuotaFinal}`,
+    `Cuota promedio (con IVA): ${cuotaPromedio}`,
   ].join("\n");
 
   try {
