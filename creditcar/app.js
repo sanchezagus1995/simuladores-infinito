@@ -1,7 +1,7 @@
 import {
   planesCreditcar,
   calcularCuotasCreditcar
-} from "./simulator.js";
+} from "./simulator.js?v=202610";
 
 const montoInput = document.querySelector("#montoSolicitado");
 const categoriaSelect = document.querySelector("#categoriaVehiculo");
